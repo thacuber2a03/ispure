@@ -1,8 +1,10 @@
 ; takes in an expression and figures out whether it's pure or not, as in, whether it has side effects.
 ; cannot check code inside external function calls (returns nil, kinda makes this useless),
 (= ispure (fn (x hostfuncs)
+	; best drm ever
 	(let unknown "laksdoiejfo rvi w;elm apofj sdof")
-	(let type (or type (fn () unknown))) ; host application must define this function in order for `ispure` to work
+	; host application must define a 'type' function/primitive in order for `ispure` to work
+	(let type (or type (fn () unknown)))
 	(if (is (type 1) unknown) (error "must define 'type'"))
 
 	(let zap (mac (x) (list '= x (list 'cdr x))))
@@ -71,6 +73,8 @@
 	(closescope)
 	ret
 ))
+
+;;;;; tests section ;;;;;
 
 (do
 	(let assert (mac (x e . ext)
