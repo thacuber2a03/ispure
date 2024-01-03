@@ -1,0 +1,103 @@
+; takes in an expression and figures out whether it's pure or not, as in, whether it has side effects.
+; cannot check code inside external function calls (returns nil, kinda makes this useless),
+(= ispure (fn (x hostfuncs)
+	(let unknown "laksdoiejfo rvi w;elm apofj sdof")
+	(let type (or type (fn () unknown))) ; host application must define this function in order for `ispure` to work
+	(if (is (type 1) unknown) (error "must define 'type'"))
+
+	(let zap (mac (x) (list '= x (list 'cdr x))))
+
+	(let find (fn (x l)
+		(let ret nil)
+		(while l
+			(if (is (car l) x) (= ret t))
+			(zap l)
+		)
+		ret
+	))
+
+	(let decls nil)
+
+	(let newscope (mac () '(= decls (cons '() decls))))
+	(let closescope (mac () '(zap decls)))
+	(let declare (fn (sym) (if (not decls) (newscope)) (setcar decls (cons sym (car decls)))))
+
+	(let defined? (fn (sym)
+		(let d decls)
+		(let ret nil)
+		(while d (if (find sym (car d)) (= ret t)) (zap d))
+		ret
+	))
+
+	; TODO: make this function iterative, fe has no tail-call optimization
+	(let walk nil)
+	(= walk (fn (x f)
+		(if
+			(atom x) (f (list x) nil)
+			(do
+				(let iscall t)
+				(let mkenv (find (car x) '(do if fn mac while)))
+				(while x
+					(if (and iscall mkenv) (newscope))
+					(let o (car x))
+					(if (not (or (f x iscall) (atom o))) (walk o f))
+					(if (and (not (cdr x)) mkenv) (closescope))
+					(= iscall nil) (zap x)
+				)
+			)
+		)
+	))
+
+	; pre-declare host app functions
+	(newscope)
+	(while hostfuncs (declare (car hostfuncs)) (zap hostfuncs))
+	(let ret t)
+	(walk x (fn (l iscall)
+		(let o (car l))
+		(let varname (car (cdr l)))
+		(if
+			iscall (if
+				(find o '(fn mac)) (do (while varname (declare (car varname)) (zap varname)) t)
+				(find o '(if mac while quote and or do cons car cdr list not is atom < <= + - * /)) nil
+				(is o 'let) (if (not (defined? varname)) (declare varname))
+				(find o '(setcar setcdr =)) (if (not (defined? varname)) (= ret "assignment to external object"))
+				(is o 'print) (= ret "call to 'print'")
+				(not (defined? o)) (= ret "call to external object")
+			)
+			(not (is (type o) "symbol")) nil
+			(not (defined? o)) (= ret "undefined symbol")
+		)
+	))
+	(closescope)
+	ret
+))
+
+(do
+	(let assert (mac (x e . ext)
+		(list 'do
+			(list 'let 'ret (list 'ispure x (cons 'list ext)))
+			(list 'if (list 'not (list 'is 'ret e)) (list 'do
+				'(= res nil)
+				(list 'print "test" 'testno "expected" e "but got" 'ret)
+			))
+			'(= testno (+ testno 1))
+		)
+	))
+
+	(let endtests (mac () '(if res (print "all tests passed!"))))
+
+	(let res t)
+	(let testno 0)
+	(assert 2 t)
+	(assert '(print 1) "call to 'print'")
+	(assert '(do (undefined)) "call to external object")
+	(assert '(do (hostfunc)) t 'hostfunc)
+	(assert '(do (hf1) (hf2)) t 'hf1 'hf2)
+	(assert '(do (hf1) (hf2)) "call to external object" 'hf1)
+	(assert '(do (let x 1) x) t)
+	(assert '(do (let x t) (do x)) t) ; x is defined in parent scope
+	(assert '(do (do (let x 1)) x) "undefined symbol") ; declaration of x exits scope and gets destroyed
+	(assert '(do (let x nil) (let test (fn () (= x t) x)) x) t) ; x is defined outside the function, but inside the block of code
+	(assert '(do (let x 1) (let test (fn (y) (+ x y))) (test 4)) t) ; if arguments to functions are pure, parameters are also pure
+	(endtests)
+)
