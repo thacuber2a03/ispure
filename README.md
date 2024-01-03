@@ -6,13 +6,13 @@ yes, it's a repository for a single function. I spent my whole afternoon writing
 - [rxi/fe](https://github.com/rxi/fe)
 - a host application that embeds fe, reads the function somehow and provides a `type` function/primitive.
 
-### faq
+## faq
 
-#### who needs this?
+### who needs this?
 idk, functional programmers I guess?
 
-#### why should I use it?
+### why should I use it?
 idk either
 
-#### ...why did you do this again?
+### ...why did you do this again?
 kasjdlaskjdlksajdlsajdlaskdjlaskjdlaskdjalskdjalskjdalskdjaslkdjalskdjalskdjaslkdjasldkjasldakjsldkjaslkdjalsdjlaskjdakasjdlaskjdlksajdlsajdlaskdjlaskjdlaskdjalskdjalskjdalskdjaslkdjalskdjalskdjaslkdjasldkjasldakjsldkjaslkdjalsdjlaskjdakasjdlaskjdlksajdlsajdlaskdjlaskjdlaskdjalskdjalskjdalskdjaslkdjalskdjalskdjaslkdjasldkjasldakjsldkjaslkdjalsdjlaskjda
