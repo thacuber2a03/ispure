@@ -1,5 +1,5 @@
 # ispure
-a function that checks whether an expression is pure (has no side effects). returns `t` if it's pure and the reason why it *isn't* otherwise.
+a function that checks whether an expression is pure (has no side effects). returns `t` if it's pure and the reason why it *isn't* otherwise. it cannot check for external functions, so you must define them yourself.
 yes, it's a repository for a single function. I spent my whole afternoon writing it to prove myself it was possible and I'm not getting rid of it now.
 
 ## dependencies
