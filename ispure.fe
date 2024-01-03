@@ -1,6 +1,6 @@
 ; takes in an expression and figures out whether it's pure or not, as in, whether it has side effects.
 ; cannot check code inside external function calls (returns nil, kinda makes this useless),
-(= ispure (fn (x extfuncs)
+(= ispure (fn (x hostfuncs)
 	; best drm ever
 	(let unknown "laksdoiejfo rvi w;elm apofj sdof")
 	; host application must define a 'type' function/primitive in order for `ispure` to work
@@ -52,7 +52,7 @@
 
 	; pre-declare host app functions
 	(newscope)
-	(while extfuncs (declare (car extfuncs)) (zap extfuncs))
+	(while hostfuncs (declare (car hostfuncs)) (zap hostfuncs))
 	(let ret t)
 	(walk x (fn (l iscall)
 		(let o (car l))
