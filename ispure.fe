@@ -1,5 +1,5 @@
 ; takes in an expression and figures out whether it's pure or not, as in, whether it has side effects.
-; cannot check code inside external function calls (returns nil, kinda makes this useless),
+; cannot check code inside external function calls (kinda makes this useless),
 (= ispure (fn (x hostfuncs)
 	; best drm ever
 	(let unknown "laksdoiejfo rvi w;elm apofj sdof")
