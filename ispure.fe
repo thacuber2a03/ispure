@@ -102,6 +102,6 @@
 	(assert '(do (let x t) (do x)) t) ; x is defined in parent scope
 	(assert '(do (do (let x 1)) x) "undefined symbol") ; declaration of x exits scope and gets destroyed
 	(assert '(do (let x nil) (let test (fn () (= x t) x)) x) t) ; x is defined outside the function, but inside the block of code
-	(assert '(do (let x 1) (let test (fn (y) (+ x y))) (test 4)) t) ; if arguments to functions are pure, parameters are also pure
+	(assert '(do (let x 1) (let test (fn (y) (+ x y))) (test 4)) t) ; parameters are always pure
 	(endtests)
 )
